@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Danh Mục</title>
+    <title>Quản lý Sản Phẩm</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h2>Quản lý Danh Mục</h2>
+    <h2>Quản lý Sản Phẩm</h2>
     
-    <form id="categoryForm">
-        <input type="text" id="categoryId" placeholder="ID Danh Mục" required>
-        <input type="text" id="categoryName" placeholder="Tên Danh Mục" required>
-        <input type="text" id="categoryDesc" placeholder="Mô Tả" required>
-        <button type="submit">Thêm Danh Mục</button>
+    <form id="productForm">
+        <input type="text" id="productId" placeholder="ID Sản Phẩm" required>
+        <input type="text" id="productName" placeholder="Tên Sản Phẩm" required>
+        <input type="number" id="productPrice" placeholder="Giá Hiện Tại" required>
+        <input type="number" id="productOldPrice" placeholder="Giá Cũ">
+        <input type="text" id="productDesc" placeholder="Mô Tả" required>
+        <input type="url" id="productImage" placeholder="URL Ảnh" required>
+        <button type="submit">Thêm Sản Phẩm</button>
     </form>
     
     <table>
@@ -21,59 +24,63 @@
             <tr>
                 <th>ID</th>
                 <th>Tên</th>
+                <th>Giá</th>
+                <th>Giá Cũ</th>
                 <th>Mô Tả</th>
+                <th>Hình Ảnh</th>
                 <th>Hành động</th>
             </tr>
         </thead>
-        <tbody id="categoryList"></tbody>
+        <tbody id="productList"></tbody>
     </table>
     
     <script>
         $(document).ready(function () {
-            function loadCategories() {
-                let categories = JSON.parse(localStorage.getItem("categories")) || [];
-                $("#categoryList").html("");
-                categories.forEach((cat, index) => {
-                    $("#categoryList").append(`
+            function loadProducts() {
+                let products = JSON.parse(localStorage.getItem("products")) || [];
+                $("#productList").html("");
+                products.forEach((prod, index) => {
+                    $("#productList").append(`
                         <tr>
-                            <td>${cat.id}</td>
-                            <td>${cat.name}</td>
-                            <td>${cat.description}</td>
+                            <td>${prod.id}</td>
+                            <td>${prod.name}</td>
+                            <td>${prod.price}</td>
+                            <td>${prod.oldPrice}</td>
+                            <td>${prod.description}</td>
+                            <td><img src="${prod.image}" width="50"></td>
                             <td><span class='delete-btn' data-index='${index}'>Xóa</span></td>
                         </tr>
                     `);
                 });
             }
             
-            $("#categoryForm").submit(function (e) {
+            $("#productForm").submit(function (e) {
                 e.preventDefault();
-                let id = $("#categoryId").val().trim();
-                let name = $("#categoryName").val().trim();
-                let description = $("#categoryDesc").val().trim();
+                let id = $("#productId").val().trim();
+                let name = $("#productName").val().trim();
+                let price = $("#productPrice").val().trim();
+                let oldPrice = $("#productOldPrice").val().trim() || "N/A";
+                let description = $("#productDesc").val().trim();
+                let image = $("#productImage").val().trim();
                 
-                if (!id || !name || !description) {
-                    alert("Vui lòng nhập đầy đủ thông tin!");
-                    return;
-                }
-                
-                let categories = JSON.parse(localStorage.getItem("categories")) || [];
-                categories.push({ id, name, description });
-                localStorage.setItem("categories", JSON.stringify(categories));
-                
-                $("#categoryForm")[0].reset();
-                loadCategories();
+                let products = JSON.parse(localStorage.getItem("products")) || [];
+                products.push({ id, name, price, oldPrice, description, image });
+                localStorage.setItem("products", JSON.stringify(products));
+                $("#productForm")[0].reset();
+                loadProducts();
             });
             
             $(document).on("click", ".delete-btn", function () {
                 let index = $(this).data("index");
-                let categories = JSON.parse(localStorage.getItem("categories")) || [];
-                categories.splice(index, 1);
-                localStorage.setItem("categories", JSON.stringify(categories));
-                loadCategories();
+                let products = JSON.parse(localStorage.getItem("products")) || [];
+                products.splice(index, 1);
+                localStorage.setItem("products", JSON.stringify(products));
+                loadProducts();
             });
             
-            loadCategories();
+            loadProducts();
         });
     </script>
 </body>
 </html>
+
